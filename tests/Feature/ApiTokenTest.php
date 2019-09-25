@@ -35,12 +35,27 @@ class ApiTokenTest extends TestCase
             'api_token' => $this->user->api_token
         ]);
 
-
         $response
             ->assertStatus(200)
             ->assertJsonFragment([
                 'name' => $this->user->name,
                 'email' => $this->user->email,
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function cannotGetAnyUserByUnknownToken()
+    {
+        $response = $this->json('GET', '/api/user', [
+            'api_token' => Str::random(60)
+        ]);
+
+        $response
+            ->assertStatus(401)
+            ->assertJsonFragment([
+                'message' =>'Unauthenticated.',
             ]);
     }
 }
